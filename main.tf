@@ -23,6 +23,28 @@ resource "aws_subnet" "poc_public_subnet" {
   }
 }
 
+resource "aws_subnet" "subnet_a" {
+  vpc_id = aws_vpc.poc_vpc.id
+  cidr_block = "10.123.4.0/24"
+  availability_zone = "ap-south-1a"
+}
+
+resource "aws_subnet" "subnet_b" {
+  vpc_id = aws_vpc.poc_vpc.id
+  cidr_block = "10.123.5.0/24"
+  availability_zone = "ap-south-1b"
+}
+
+#AWS DB Subnet Group
+resource "aws_db_subnet_group" "poc_db_subnet_group" {
+  name = "poc_db_subnet_group"
+  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+
+  tags = {
+    Name = "dev-db-subnet-group"
+  }  
+}
+
 #AWS Internet Gateway
 resource "aws_internet_gateway" "poc_internet_gateway" {
   vpc_id = aws_vpc.poc_vpc.id
