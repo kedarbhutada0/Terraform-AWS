@@ -54,56 +54,8 @@ resource "aws_route_table_association" "poc_public_assoc" {
   route_table_id = aws_route_table.poc_public_rt.id
 }
 
-#AWS Security Group
-resource "aws_security_group" "poc_sg" {
-  name        = "dev_sg"
-  description = "Dev Security Group"
-  vpc_id      = aws_vpc.poc_vpc.id
-
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/32"] //Add your ipv4 address here
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 #AWS Key Pair
 resource "aws_key_pair" "poc_auth" {
   key_name   = "pockey"
   public_key = file("~/.ssh/pockey.pub")
-}
-
-#AWS EC2 Instance
-resource "aws_instance" "dev_node" {
-  instance_type          = "t2.micro"
-  ami                    = data.aws_ami.server_ami.id
-  key_name               = aws_key_pair.poc_auth.id
-  vpc_security_group_ids = [aws_security_group.poc_sg.id]
-  subnet_id              = aws_subnet.poc_public_subnet.id
-  user_data              = file("userdata.tpl")
-
-  root_block_device {
-    volume_size = 10
-  }
-
-  tags = {
-    Name = "dev-node"
-  }
-
-  provisioner "local-exec" {
-    command = templatefile("${var.host_os}-ssh-config.tpl", {
-      hostname     = self.public_ip,
-      user         = "ubuntu",
-      identityfile = "~/.ssh/pockey"
-    })
-    interpreter = ["Powershell", "-Command"]
-  }
 }
