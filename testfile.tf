@@ -1,3 +1,3 @@
-output name {
-  value       = "Git test!!"
+output "name" {
+  value = "Git test!!"
 }
