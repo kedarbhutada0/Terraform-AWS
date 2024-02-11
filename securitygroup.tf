@@ -8,7 +8,7 @@ resource "aws_security_group" "poc_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["49.36.57.240/32"] //Add your ipv4 address here
+    cidr_blocks = ["49.36.56.193/32"] //Add your ipv4 address here
   }
 
   egress {
